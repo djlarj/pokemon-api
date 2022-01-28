@@ -16,25 +16,24 @@
 
     <div class="container text-center text-light m-auto" id="summonPokemon">
         <div id="summonPokemonControls">
-            <p class="text-light">Summon your desired Pokemon by typing its name below.</p>
+            <p class="text-light">Summon your desired Pokemon by typing its name or id below.</p>
             <input class="pokemonNameInput" type="text" name="thishastobelowercase" placeholder="Enter Pokemon Name Here" onkeypress="this.value = this.value.toLowerCase();">
             <button class="pokemonSummonButton btn btn-light">Summon</button>
-        </div>
-            
+        </div>   
         <div class="my-5" id="pokemonImg">
         </div>
     </div>    
 
-
-    <div id="listControls">
-        <input class="listLengthInput" type="text" placeholder="list length">
-        <input class="offsetInput" type="text" placeholder="offset">
-        <button class="pokemonListButton">Show Pokemon Names</button>
-    </div>
-    <br>
-    <br>
-    <div id="pokemonList">
-    </div> 
+    <div class="container text-center text-light m-auto" id="summonPokemonNames">
+        <div id="listControls">
+            <input class="listLengthInput" type="text" placeholder="list length">
+            <input class="offsetInput" type="text" placeholder="offset">
+            <button class="pokemonListButton btn btn-light">Show Pokemon Names</button>
+        </div>
+        <div class="my-5" id="pokemonList">
+        </div>
+    </div>     
+</body>
     
     <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>

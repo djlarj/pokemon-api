@@ -20,9 +20,12 @@ fetch(base_url + name)
 }).then( (facts) => {
     summonPokemon.innerHTML = '';
     console.log(facts);
-    const h1 = document.createElement('h2');
-    h1.innerText = facts.name;
-    summonPokemon.appendChild(h1);
+    const h2 = document.createElement('h2');
+    h2.innerText = facts.name;
+    summonPokemon.appendChild(h2);
+    const h3 = document.createElement('h3');
+    h3.innerText = facts.id;
+    summonPokemon.appendChild(h3);
     const img = document.createElement('img');
     summonPokemon.appendChild(img);
     img.src = facts.sprites.front_default;
@@ -53,12 +56,9 @@ function getPokemonList() {
         pokemonList.innerHTML = '';
         console.log(data);
         data.results.forEach( pokemon => {
-            const li = document.createElement('li');
-            li.innerText = pokemon.name;
-            pokemonList.appendChild(li);
-            li.addEventListener('click', () => {
-                getPokemonByName(pokemon.name);
-            })
+            const pokeName = document.createElement('p');
+            pokeName.innerText = pokemon.name;
+            pokemonList.appendChild(pokeName);
         });
     });
 }
