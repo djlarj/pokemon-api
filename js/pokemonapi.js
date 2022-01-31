@@ -29,9 +29,9 @@ fetch(base_url + name)
     const displayType1 = document.createElement('p');
     displayType1.innerText = facts.types[0].type.name;
     summonPokemon.appendChild(displayType1);
-    const displayType2 = document.createElement('p');
-    displayType2.innerText = facts.types[1].type.name;
-    summonPokemon.appendChild(displayType2);
+    // const displayType2 = document.createElement('p');
+    // displayType2.innerText = facts.types[1].type.name;
+    // summonPokemon.appendChild(displayType2);
     const displayImage = document.createElement('img');
     summonPokemon.appendChild(displayImage);
     displayImage.src = facts.sprites.front_default;
