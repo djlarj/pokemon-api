@@ -20,16 +20,22 @@ fetch(base_url + name)
 }).then( (facts) => {
     summonPokemon.innerHTML = '';
     console.log(facts);
-    const h2 = document.createElement('h2');
-    h2.innerText = facts.name;
-    summonPokemon.appendChild(h2);
-    const h3 = document.createElement('h3');
-    h3.innerText = facts.id;
-    summonPokemon.appendChild(h3);
-    const img = document.createElement('img');
-    summonPokemon.appendChild(img);
-    img.src = facts.sprites.front_default;
-    img.width = '300';
+    const displayName = document.createElement('h2');
+    displayName.innerText = facts.name;
+    summonPokemon.appendChild(displayName);
+    const displayId = document.createElement('h3');
+    displayId.innerText = facts.id;
+    summonPokemon.appendChild(displayId);
+    const displayType1 = document.createElement('p');
+    displayType1.innerText = facts.types[0].type.name;
+    summonPokemon.appendChild(displayType1);
+    const displayType2 = document.createElement('p');
+    displayType2.innerText = facts.types[1].type.name;
+    summonPokemon.appendChild(displayType2);
+    const displayImage = document.createElement('img');
+    summonPokemon.appendChild(displayImage);
+    displayImage.src = facts.sprites.front_default;
+    displayImage.width = '300';
 }).catch( err => console.log(err)); 
 }
 
