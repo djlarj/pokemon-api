@@ -19,19 +19,29 @@ fetch(base_url + name)
     return res.json();
 }).then( (facts) => {
     summonPokemon.innerHTML = '';
-    console.log(facts);
+    // console.log(facts);
     const displayName = document.createElement('h2');
     displayName.innerText = facts.name;
     summonPokemon.appendChild(displayName);
     const displayId = document.createElement('h3');
     displayId.innerText = facts.id;
     summonPokemon.appendChild(displayId);
-    const displayType1 = document.createElement('p');
-    displayType1.innerText = facts.types[0].type.name;
-    summonPokemon.appendChild(displayType1);
-    // const displayType2 = document.createElement('p');
-    // displayType2.innerText = facts.types[1].type.name;
-    // summonPokemon.appendChild(displayType2);
+
+    let existingObject = facts.types[1];
+    // console.log(existingObject);
+    if (typeof existingObject != 'undefined') {
+        const displayType1 = document.createElement('p');
+        displayType1.innerText = facts.types[0].type.name;
+        summonPokemon.appendChild(displayType1);
+        const displayType2 = document.createElement('p');
+        displayType2.innerText = facts.types[1].type.name;
+        summonPokemon.appendChild(displayType2);    
+    } else {
+        const displayType1 = document.createElement('p');
+        displayType1.innerText = facts.types[0].type.name;
+        summonPokemon.appendChild(displayType1);    
+    }
+
     const displayImage = document.createElement('img');
     summonPokemon.appendChild(displayImage);
     displayImage.src = facts.sprites.front_default;
@@ -60,7 +70,7 @@ function getPokemonList() {
     .then(res => res.json() )
     .then(data => {
         pokemonList.innerHTML = '';
-        console.log(data);
+        // console.log(data);
         data.results.forEach( pokemon => {
             const pokeName = document.createElement('p');
             pokeName.innerText = pokemon.name;
