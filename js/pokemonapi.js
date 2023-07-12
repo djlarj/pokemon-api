@@ -14,7 +14,7 @@ pokemonSummonButton.addEventListener('click', () => {
 function getPokemonByName(name) {
     const base_url = `https://pokeapi.co/api/v2/pokemon/${pokemonName}`;
 
-fetch(base_url + name)
+fetch(base_url + name)  
 .then( res => {
     return res.json();
 }).then( (facts) => {
@@ -78,3 +78,19 @@ function getPokemonList() {
         });
     });
 }
+
+//Back-to-Top button
+const btn = $('#button');
+
+$(window).scroll(function() {
+  if ($(window).scrollTop() > 100) {
+    btn.addClass('show');
+  } else {
+    btn.removeClass('show');
+  }
+});
+
+btn.on('click', function(e) {
+  e.preventDefault();
+  $('html, body').animate({scrollTop:0}, '100');
+});

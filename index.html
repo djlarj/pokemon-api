@@ -1,53 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
-    <link rel="stylesheet" href="css/styles.css">
-    <title>The Geek Next Door - Pokemon API</title>
-</head>
-<body class="bg-dark">
-    <div class="container text-center text-light m-auto" id="headerh1">
-        <h1 class="my-5"><a id="pokemonHeader" href="index.html">Pokemon API Demo</a></h1>
-    </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <div class="container text-center text-light m-auto" id="summonPokemon">
-        <div id="summonPokemonControls">
-            <p class="text-light">Summon your desired Pokemon by typing its name or id below.</p>
-            <input class="pokemonNameInput pb-1" type="text" name="thishastobelowercase" placeholder="Pokemon Name or ID" onkeypress="this.value = this.value.toLowerCase();">
-            <button class="pokemonSummonButton btn btn-light btn-sm">Summon</button>
-        </div>   
-        <div class="my-5" id="pokemonImg">
-        </div>
-    </div>    
+        <!-- Bootstrap CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link rel="stylesheet" href="css/styles.css">
 
-    <div class="container text-center text-light m-auto" id="summonPokemonNames">
-        <div id="listControls">
-            <p class="text-light">Display a list of Pokemon names using the controls below.</p>
-            <input class="listLengthInput pb-1" type="text" placeholder="list length">
-            <input class="offsetInput pb-1 my-2" type="text" placeholder="offset">
-            <button class="pokemonListButton btn btn-light btn-sm">Show Pokemon Names</button>
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        
+        <title>The Geek Next Door - Pokemon API</title>
+    </head>
+    
+    <body class="bg-dark">
+        <div class="container text-center text-light m-auto" id="headerh1">
+            <h1 class="my-5"><a id="pokemonHeader" href="index.html">Pokemon API Demo</a></h1>
         </div>
-        <div class="my-5" id="pokemonList">
-        </div>
-    </div>
-    <!-- Footer -->
-    <footer class="container-fluid m-auto">
-        <div class="row m-auto" style="height: 100px;">
-            <!-- copyright -->
-            <div class="col d-flex justify-content-center text-light">
-                <p class="align-middle my-auto text-center">©2023 The Geek Next Door</p>
+
+        <div class="container text-center text-light m-auto" id="summonPokemon">
+            <div id="summonPokemonControls">
+                <p class="text-light">Summon your desired Pokemon by typing its name or id below.</p>
+                <input class="pokemonNameInput pb-1" type="text" name="thishastobelowercase" placeholder="Pokemon Name or ID" onkeypress="this.value = this.value.toLowerCase();">
+                <button class="pokemonSummonButton btn btn-light btn-sm">Summon</button>
+            </div>   
+            <div class="my-5" id="pokemonImg">
+            </div>
+        </div>    
+
+        <div class="container text-center text-light m-auto" id="summonPokemonNames">
+            <div id="listControls">
+                <p class="text-light">Display a list of Pokemon names using the controls below.</p>
+                <input class="listLengthInput pb-1" type="text" placeholder="list length">
+                <input class="offsetInput pb-1 my-2" type="text" placeholder="offset">
+                <button class="pokemonListButton btn btn-light btn-sm">Show Pokemon Names</button>
+            </div>
+            <div class="my-5" id="pokemonList">
             </div>
         </div>
-    </footer>     
-</body>
+
+        <!-- Back to top button -->
+        <a id="button" class="text-decoration-none"></a>
+
+        <!-- Footer -->
+        <footer class="container-fluid m-auto">
+            <div class="row m-auto" style="height: 100px;">
+                <!-- copyright -->
+                <div class="col d-flex justify-content-center text-light">
+                    <p class="align-middle my-auto text-center">©2023 The Geek Next Door</p>
+                </div>
+            </div>
+        </footer>     
     
-    <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
-    <script src="js/pokemonapi.js"></script>   
-</body>
+        <!-- Option 1: jQuery and Bootstrap Bundle (includes Popper) -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js" integrity="sha384-fbbOQedDUMZZ5KreZpsbe1LCZPVmfTnH7ois6mU1QK+m14rQ1l2bGBq41eYeM/fS" crossorigin="anonymous"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="js/pokemonapi.js"></script>   
+    </body>
+
 </html>
