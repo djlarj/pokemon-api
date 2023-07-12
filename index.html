@@ -23,7 +23,7 @@
         <div class="container text-center text-light m-auto" id="summonPokemon">
             <div id="summonPokemonControls">
                 <p class="text-light">Summon your desired Pokemon by typing its name or id below.</p>
-                <input class="pokemonNameInput pb-1" type="text" name="thishastobelowercase" placeholder="Pokemon Name or ID" onkeypress="this.value = this.value.toLowerCase();">
+                <input class="pokemonNameInput pb-1" type="text" name="thishastobelowercase" placeholder="Pokemon Name or ID" onkeypress="this.value = this.value.toLowerCase();" aria-label="Type the Pokemon Name or ID here">
                 <button class="pokemonSummonButton btn btn-light btn-sm">Summon</button>
             </div>   
             <div class="my-5" id="pokemonImg">
@@ -33,8 +33,8 @@
         <div class="container text-center text-light m-auto" id="summonPokemonNames">
             <div id="listControls">
                 <p class="text-light">Display a list of Pokemon names using the controls below.</p>
-                <input class="listLengthInput pb-1" type="text" placeholder="list length">
-                <input class="offsetInput pb-1 my-2" type="text" placeholder="offset">
+                <input class="listLengthInput pb-1" type="text" placeholder="list length" aria-label="Type the length of Pokemon names you want listed here">
+                <input class="offsetInput pb-1 my-2" type="text" placeholder="offset" aria-label="Type the offset of Pokemon names you want listed here">
                 <button class="pokemonListButton btn btn-light btn-sm">Show Pokemon Names</button>
             </div>
             <div class="my-5" id="pokemonList">

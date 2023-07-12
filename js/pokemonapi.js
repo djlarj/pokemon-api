@@ -46,6 +46,7 @@ fetch(base_url + name)
     summonPokemon.appendChild(displayImage);
     displayImage.src = facts.sprites.front_default;
     displayImage.width = '300';
+    displayImage.alt = ''
 }).catch( err => console.log(err)); 
 }
 
