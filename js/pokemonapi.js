@@ -22,20 +22,40 @@ async function getPokemonByName(name) {
         const pokemonData = await response.json();
 
         summonPokemon.innerHTML = '';
-        createAndAppendElement('h2', pokemonData.name);
-        createAndAppendElement('h3', pokemonData.id);
 
-        for (let type of pokemonData.types) {
-            createAndAppendElement('p', type.type.name);
-        }
+        // Capitalize the first letter of every word in Pokemon name, including words after hyphens
+        const capitalizedPokemonName = capitalizeEveryWord(pokemonData.name);
 
+        // Pokemon Name
+        createAndAppendElement('h2', capitalizedPokemonName);
+
+        // Pokemon ID
+        createAndAppendElement('p', "Pokemon ID:" + " " + pokemonData.id);
+
+        // Pokemon Image
         const displayImage = createAndAppendElement('img');
-        displayImage.src = pokemonData.sprites.front_default;
+        displayImage.src = pokemonData.sprites.other['official-artwork'].front_default;
         displayImage.width = '300';
         displayImage.alt = '';
+
+        // Pokemon Type(s)
+        // Loop through types and display them with "Type 1" and "Type 2" labels
+        for (let i = 0; i < pokemonData.types.length; i++) {
+            const type = pokemonData.types[i];
+            createAndAppendElement('p', `Type ${i + 1}: ${type.type.name}`);
+        }
+
     } catch (err) {
         console.log(err);
     }
+}
+
+// Function to capitalize the first letter of every word, including words after hyphens
+function capitalizeEveryWord(string) {
+    return string
+        .split('-') // Split the string by hyphens
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
+        .join('-'); // Join the words back with hyphens
 }
 
 function createAndAppendElement(tagName, text) {
