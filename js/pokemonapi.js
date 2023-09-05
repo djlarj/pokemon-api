@@ -68,7 +68,7 @@ function createAndAppendElement(tagName, text) {
 }
 
 
-//Displaying a list of Pokemon names
+//Display a list of Pokemon names
 
 const listLengthInput = document.querySelector('.listLengthInput');
 const offsetInput = document.querySelector('.offsetInput');
