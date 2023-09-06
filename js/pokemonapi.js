@@ -45,6 +45,17 @@ async function getPokemonByName(name) {
             createAndAppendElement('p', `Type ${i + 1}: ${type.type.name}`);
         }
 
+        // Pokemon Base Experience
+        createAndAppendElement('p', "Base Experience:" + " " + pokemonData.base_experience);
+
+        // Pokemon Height (converted to inches with 2 decimal places)
+        const heightInInches = (pokemonData.height / 10) * 39.37; // Convert decimetres to inches
+        createAndAppendElement('p', `Height: ${heightInInches.toFixed(2)} inches`);
+
+        // Pokemon Weight (converted to pounds with 2 decimal places)
+        const weightInPounds = (pokemonData.weight / 10) * 2.20462; // Convert hectograms to pounds
+        createAndAppendElement('p', `Weight: ${weightInPounds.toFixed(2)} lbs`);
+
     } catch (err) {
         console.log(err);
     }
