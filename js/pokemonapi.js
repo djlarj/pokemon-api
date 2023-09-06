@@ -108,9 +108,20 @@ async function getPokemonList() {
         pokemonList.innerHTML = '';
 
         data.results.forEach(pokemon => {
-        const pokeName = document.createElement('p');
-        pokeName.innerText = pokemon.name;
-        pokemonList.appendChild(pokeName);
+            const pokeName = document.createElement('p');
+            
+            // Extract the Pokemon ID from the URL
+            const urlParts = pokemon.url.split('/');
+            const pokemonId = urlParts[urlParts.length - 2];
+            
+            // Capitalize the first letter of every word in the Pokemon name
+            const capitalizedPokemonName = capitalizeEveryWord(pokemon.name);
+            
+            // Create the display string with ID and name
+            const displayString = `${pokemonId} - ${capitalizedPokemonName}`;
+            
+            pokeName.innerText = displayString;
+            pokemonList.appendChild(pokeName);
         });
     } catch (err) {
         console.log(err);
