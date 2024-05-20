@@ -28,10 +28,14 @@
                 <p class="text-light">Summon your desired Pokemon by typing its name or id below.</p>
                 <input class="pokemonNameInput pb-1" type="text" name="thishastobelowercase" placeholder="Pokemon Name or ID" onkeypress="this.value = this.value.toLowerCase();" aria-label="Type the Pokemon Name or ID here">
                 <button class="pokemonSummonButton btn btn-light btn-sm">Summon</button>
-            </div>   
-            <div class="my-5" id="pokemonImg">
             </div>
-        </div>    
+            <div class="d-flex justify-content-center my-5" id="pokemonImg">
+                <i class="fa fa-chevron-left align-self-center mx-3" id="prevPokemon" style="cursor: pointer; display: none;"></i>
+                <div id="pokemonDetails"></div>
+                <i class="fa fa-chevron-right align-self-center mx-3" id="nextPokemon" style="cursor: pointer; display: none;"></i>
+            </div>
+        </div>
+           
 
         <!-- List Pokemon -->
         <div class="container text-center text-light m-auto" id="summonPokemonNames">

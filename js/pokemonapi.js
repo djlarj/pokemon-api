@@ -1,27 +1,32 @@
 // Summoning Pokemon
 
-const summonPokemon = document.querySelector('#pokemonImg');
+const summonPokemon = document.querySelector('#pokemonDetails');
 const pokemonNameInput = document.querySelector('.pokemonNameInput');
 const pokemonSummonButton = document.querySelector('.pokemonSummonButton');
+const prevPokemon = document.querySelector('#prevPokemon');
+const nextPokemon = document.querySelector('#nextPokemon');
+let currentPokemonId;
 
 pokemonSummonButton.addEventListener('click', () => {
     const pokemonName = pokemonNameInput.value;
     getPokemonByName(pokemonName);
 });
-  
+
 pokemonNameInput.addEventListener('keypress', (event) => {
     if (event.key === 'Enter') {
         const pokemonName = pokemonNameInput.value;
         getPokemonByName(pokemonName);
     }
 });
-  
+
+// Updated getPokemonList function
 async function getPokemonByName(name) {
     try {
         const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
         const pokemonData = await response.json();
 
         summonPokemon.innerHTML = '';
+        currentPokemonId = pokemonData.id;
 
         // Capitalize the first letter of every word in Pokemon name, including words after hyphens
         const capitalizedPokemonName = capitalizeEveryWord(pokemonData.name);
@@ -39,7 +44,6 @@ async function getPokemonByName(name) {
         displayImage.alt = '';
 
         // Pokemon Type(s)
-        // Loop through types and display them with "Type 1" and "Type 2" labels
         for (let i = 0; i < pokemonData.types.length; i++) {
             const type = pokemonData.types[i];
             createAndAppendElement('p', `Type ${i + 1}: ${type.type.name}`);
@@ -49,24 +53,39 @@ async function getPokemonByName(name) {
         createAndAppendElement('p', "Base Experience:" + " " + pokemonData.base_experience);
 
         // Pokemon Height (converted to inches with 2 decimal places)
-        const heightInInches = (pokemonData.height / 10) * 39.37; // Convert decimetres to inches
+        const heightInInches = (pokemonData.height / 10) * 39.37;
         createAndAppendElement('p', `Height: ${heightInInches.toFixed(2)} inches`);
 
         // Pokemon Weight (converted to pounds with 2 decimal places)
-        const weightInPounds = (pokemonData.weight / 10) * 2.20462; // Convert hectograms to pounds
+        const weightInPounds = (pokemonData.weight / 10) * 2.20462;
         createAndAppendElement('p', `Weight: ${weightInPounds.toFixed(2)} lbs`);
+
+        // Show navigation chevrons
+        prevPokemon.style.display = 'inline';
+        nextPokemon.style.display = 'inline';
+
+        // Update event listeners for chevrons
+        prevPokemon.onclick = () => getPokemonById(currentPokemonId - 1);
+        nextPokemon.onclick = () => getPokemonById(currentPokemonId + 1);
 
     } catch (err) {
         console.log(err);
     }
 }
 
-// Function to capitalize the first letter of every word, including words after hyphens
+async function getPokemonById(id) {
+    try {
+        await getPokemonByName(id);
+    } catch (err) {
+        console.log(err);
+    }
+}
+
 function capitalizeEveryWord(string) {
     return string
-        .split('-') // Split the string by hyphens
-        .map(word => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize each word
-        .join('-'); // Join the words back with hyphens
+        .split('-')
+        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+        .join('-');
 }
 
 function createAndAppendElement(tagName, text) {
@@ -79,7 +98,7 @@ function createAndAppendElement(tagName, text) {
 }
 
 
-//Display a list of Pokemon names
+// Display a list of Pokemon names
 
 const listLengthInput = document.querySelector('.listLengthInput');
 const offsetInput = document.querySelector('.offsetInput');
@@ -96,6 +115,7 @@ function handleKeyPress(event) {
     }
 }
 
+// Updated getPokemonList function
 async function getPokemonList() {
     const listLength = listLengthInput.value;
     const offset = offsetInput.value;
@@ -120,7 +140,11 @@ async function getPokemonList() {
             // Create the display string with ID and name
             const displayString = `${pokemonId} - ${capitalizedPokemonName}`;
             
+            // Make the name clickable
             pokeName.innerText = displayString;
+            pokeName.style.cursor = 'pointer';
+            pokeName.addEventListener('click', () => getPokemonByName(pokemon.name));
+            
             pokemonList.appendChild(pokeName);
         });
     } catch (err) {
@@ -128,8 +152,7 @@ async function getPokemonList() {
     }
 }
 
-
-//Back-to-Top button
+// Back-to-Top button
 const btn = $('#button');
 
 $(window).scroll(function() {
