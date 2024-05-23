@@ -172,6 +172,36 @@ async function getPokemonById(id) {
     }
 }
 
+// Variables to store touch positions
+let touchstartX = 0;
+let touchendX = 0;
+const swipeThreshold = 50; // Minimum swipe distance in pixels
+
+// Function to handle swipe gestures
+function handleGesture() {
+    const swipeDistance = touchendX - touchstartX;
+
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (swipeDistance < 0) {
+            // Swiped left
+            getPokemonById(currentPokemonId + 1);
+        } else if (swipeDistance > 0) {
+            // Swiped right
+            getPokemonById(currentPokemonId - 1);
+        }
+    }
+}
+
+// Event listeners for touch events
+document.addEventListener('touchstart', (event) => {
+    touchstartX = event.changedTouches[0].screenX;
+});
+
+document.addEventListener('touchend', (event) => {
+    touchendX = event.changedTouches[0].screenX;
+    handleGesture();
+});
+
 function capitalizeEveryWord(string) {
     return string
         .split('-')
