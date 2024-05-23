@@ -26,7 +26,8 @@
         <div class="container text-center text-light m-auto" id="summonPokemon">
             <div id="summonPokemonControls">
                 <p class="text-light">Summon your desired Pokemon by typing its name or id below.</p>
-                <input class="pokemonNameInput pb-1" type="text" name="thishastobelowercase" placeholder="Pokemon Name or ID" onkeypress="this.value = this.value.toLowerCase();" aria-label="Type the Pokemon Name or ID here">
+                <input class="pokemonNameInput pb-1" type="text" name="thishastobelowercase" placeholder="Pokemon Name or ID" onkeypress="this.value = this.value.toLowerCase();" aria-label="Type the Pokemon Name or ID here" list="pokemonSuggestions">
+                <datalist id="pokemonSuggestions"></datalist>
                 <button class="pokemonSummonButton btn btn-light btn-sm">Summon</button>
             </div>
             <div class="d-flex justify-content-center my-5" id="pokemonImg">
