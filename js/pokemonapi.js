@@ -22,10 +22,13 @@ pokemonNameInput.addEventListener('keypress', (event) => {
 // Updated getPokemonList function
 async function getPokemonByName(name) {
     try {
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name}`);
+        // Show loading indicator
+        summonPokemon.innerHTML = '<p>Loading...</p>';
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
+        if (!response.ok) throw new Error('Pokémon not found');
         const pokemonData = await response.json();
 
-        summonPokemon.innerHTML = '';
+        summonPokemon.innerHTML = ''; // Clear loading indicator
         currentPokemonId = pokemonData.id;
 
         // Capitalize the first letter of every word in Pokemon name, including words after hyphens
@@ -70,6 +73,7 @@ async function getPokemonByName(name) {
 
     } catch (err) {
         console.log(err);
+        summonPokemon.innerHTML = '<p>Pokémon not found. Please try again.</p>';
     }
 }
 
