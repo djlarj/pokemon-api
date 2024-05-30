@@ -278,24 +278,26 @@ function initializeDetailsModal() {
     }
 
     // Swipe functionality within modal
-    let touchstartX = 0;
-    let touchendX = 0;
-    const swipeThreshold = 50; // Minimum swipe distance in pixels
+    let modalTouchstartX = 0;
+    let modalTouchendX = 0;
+    const modalSwipeThreshold = 50; // Minimum swipe distance in pixels
 
     // Event listeners for touch events in modal
     document.querySelector('.modal-content').addEventListener('touchstart', (event) => {
-        touchstartX = event.changedTouches[0].screenX;
+        modalTouchstartX = event.changedTouches[0].screenX;
+        event.stopPropagation(); // Stop propagation to prevent background swipe
     });
 
     document.querySelector('.modal-content').addEventListener('touchend', (event) => {
-        touchendX = event.changedTouches[0].screenX;
+        modalTouchendX = event.changedTouches[0].screenX;
         handleModalSwipe();
+        event.stopPropagation(); // Stop propagation to prevent background swipe
     });
 
     function handleModalSwipe() {
-        const swipeDistance = touchendX - touchstartX;
+        const swipeDistance = modalTouchendX - modalTouchstartX;
 
-        if (Math.abs(swipeDistance) > swipeThreshold) {
+        if (Math.abs(swipeDistance) > modalSwipeThreshold) {
             if (swipeDistance < 0) {
                 // Swiped left
                 showSection('movesSection');
