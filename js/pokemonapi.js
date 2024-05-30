@@ -8,6 +8,7 @@ const prevPokemon = document.querySelector('#prevPokemon');
 const nextPokemon = document.querySelector('#nextPokemon');
 const pokemonSuggestions = document.querySelector('#pokemonSuggestions');
 let currentPokemonId;
+let isModalOpen = false; // Flag to track modal state
 
 // Fetching all Pokémon names for autocomplete
 async function fetchAllPokemonNames() {
@@ -193,15 +194,17 @@ const swipeThreshold = 50; // Minimum swipe distance in pixels
 
 // Function to handle swipe gestures
 function handleGesture() {
-    const swipeDistance = touchendX - touchstartX;
+    if (!isModalOpen) { // Only handle swipe if modal is not open
+        const swipeDistance = touchendX - touchstartX;
 
-    if (Math.abs(swipeDistance) > swipeThreshold) {
-        if (swipeDistance < 0) {
-            // Swiped left
-            getPokemonById(currentPokemonId + 1);
-        } else if (swipeDistance > 0) {
-            // Swiped right
-            getPokemonById(currentPokemonId - 1);
+        if (Math.abs(swipeDistance) > swipeThreshold) {
+            if (swipeDistance < 0) {
+                // Swiped left
+                getPokemonById(currentPokemonId + 1);
+            } else if (swipeDistance > 0) {
+                // Swiped right
+                getPokemonById(currentPokemonId - 1);
+            }
         }
     }
 }
@@ -272,6 +275,7 @@ function initializeDetailsModal() {
             });
 
             modal.show();
+            isModalOpen = true; // Set flag to true when modal is shown
         } catch (err) {
             console.log(err);
         }
@@ -326,6 +330,11 @@ function initializeDetailsModal() {
             const target = event.target.getAttribute('data-target');
             showSection(target);
         });
+    });
+
+    // Event listener to update modal open state when modal is hidden
+    document.getElementById('pokemonDetailsModal').addEventListener('hidden.bs.modal', () => {
+        isModalOpen = false; // Set flag to false when modal is hidden
     });
 
     // Function to capitalize every word in a string
@@ -401,6 +410,7 @@ async function getPokemonList() {
         console.log(err);
     }
 }
+
 
 // Back-to-Top button
 const btn = $('#button');
