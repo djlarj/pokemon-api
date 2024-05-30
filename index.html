@@ -36,8 +36,33 @@
                 <i class="fa fa-chevron-right align-self-center mx-3" id="nextPokemon" style="cursor: pointer; display: none;"></i>
             </div>
         </div>
-           
 
+        <!-- Modal Structure -->
+        <div class="modal fade" id="pokemonDetailsModal" tabindex="-1" aria-labelledby="pokemonDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-dark text-light">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="pokemonDetailsModalLabel">Pokemon Details</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div id="abilitiesSection" class="details-section">
+                            <h6>Abilities</h6>
+                            <ul id="abilitiesList"></ul>
+                        </div>
+                        <div id="movesSection" class="details-section" style="display: none;">
+                            <h6>Moves</h6>
+                            <ul id="movesList"></ul>
+                        </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <span class="dot active" data-target="abilitiesSection"></span>
+                        <span class="dot" data-target="movesSection"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+           
         <!-- List Pokemon -->
         <div class="container text-center text-light m-auto" id="summonPokemonNames">
             <div id="listControls">
