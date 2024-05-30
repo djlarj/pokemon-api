@@ -103,7 +103,7 @@ async function getPokemonByName(name) {
         // Insert the Details button
         const detailsButton = document.createElement('button');
         detailsButton.id = 'detailsButton';
-        detailsButton.className = 'btn btn-light mt-2';
+        detailsButton.className = 'btn btn-light btn-sm mt-2';
         detailsButton.innerText = 'Details';
         summonPokemon.appendChild(detailsButton);
 
@@ -168,7 +168,7 @@ async function getPokemonById(id) {
         // Insert the Details button
         const detailsButton = document.createElement('button');
         detailsButton.id = 'detailsButton';
-        detailsButton.className = 'btn btn-light mt-2';
+        detailsButton.className = 'btn btn-light btn-sm mt-2';
         detailsButton.innerText = 'Details';
         summonPokemon.appendChild(detailsButton);
 
