@@ -190,7 +190,7 @@ async function getPokemonById(id) {
 // Variables to store touch positions
 let touchstartX = 0;
 let touchendX = 0;
-const swipeThreshold = 50; // Minimum swipe distance in pixels
+const swipeThreshold = 100; // Minimum swipe distance in pixels
 
 // Function to handle swipe gestures
 function handleGesture() {
@@ -209,12 +209,12 @@ function handleGesture() {
     }
 }
 
-// Event listeners for touch events
-document.addEventListener('touchstart', (event) => {
+// Event listeners for touch events within the pokemonDetails div
+summonPokemon.addEventListener('touchstart', (event) => {
     touchstartX = event.changedTouches[0].screenX;
 });
 
-document.addEventListener('touchend', (event) => {
+summonPokemon.addEventListener('touchend', (event) => {
     touchendX = event.changedTouches[0].screenX;
     handleGesture();
 });
@@ -284,7 +284,7 @@ function initializeDetailsModal() {
     // Swipe functionality within modal
     let modalTouchstartX = 0;
     let modalTouchendX = 0;
-    const modalSwipeThreshold = 50; // Minimum swipe distance in pixels
+    const modalSwipeThreshold = 100; // Minimum swipe distance in pixels
 
     // Event listeners for touch events in modal
     document.querySelector('.modal-content').addEventListener('touchstart', (event) => {
@@ -356,7 +356,6 @@ function createAndAppendElement(tagName, textContent) {
     return element;
 }
 
-
 // Display a list of Pokemon names
 
 const listLengthInput = document.querySelector('.listLengthInput');
@@ -410,7 +409,6 @@ async function getPokemonList() {
         console.log(err);
     }
 }
-
 
 // Back-to-Top button
 const btn = $('#button');
