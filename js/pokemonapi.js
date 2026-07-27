@@ -274,6 +274,25 @@ function initializeDetailsModal() {
                 movesList.appendChild(listItem);
             });
 
+            // Fetch the species record to find this Pokémon's evolution chain.
+            const speciesResponse = await fetch(pokemonData.species.url);
+            if (!speciesResponse.ok) throw new Error('Evolution data not found');
+            const speciesData = await speciesResponse.json();
+            const evolutionResponse = await fetch(speciesData.evolution_chain.url);
+            if (!evolutionResponse.ok) throw new Error('Evolution data not found');
+            const evolutionData = await evolutionResponse.json();
+
+            const evolutionsList = document.querySelector('#evolutionsList');
+            evolutionsList.innerHTML = '';
+            const evolutionPaths = getEvolutionPaths(evolutionData.chain);
+
+            evolutionPaths.forEach(path => {
+                const listItem = document.createElement('li');
+                listItem.innerText = path.join(' → ');
+                evolutionsList.appendChild(listItem);
+            });
+
+            showSection('abilitiesSection');
             modal.show();
             isModalOpen = true; // Set flag to true when modal is shown
         } catch (err) {
@@ -304,12 +323,24 @@ function initializeDetailsModal() {
         if (Math.abs(swipeDistance) > modalSwipeThreshold) {
             if (swipeDistance < 0) {
                 // Swiped left
-                showSection('movesSection');
+                showNextSection();
             } else if (swipeDistance > 0) {
                 // Swiped right
-                showSection('abilitiesSection');
+                showPreviousSection();
             }
         }
+    }
+
+    function showNextSection() {
+        const sections = Array.from(document.querySelectorAll('.details-section'));
+        const currentIndex = sections.findIndex(section => section.style.display !== 'none');
+        showSection(sections[(currentIndex + 1) % sections.length].id);
+    }
+
+    function showPreviousSection() {
+        const sections = Array.from(document.querySelectorAll('.details-section'));
+        const currentIndex = sections.findIndex(section => section.style.display !== 'none');
+        showSection(sections[(currentIndex - 1 + sections.length) % sections.length].id);
     }
 
     function showSection(sectionId) {
@@ -343,6 +374,19 @@ function initializeDetailsModal() {
     }
 }
 
+// Return every branch of an evolution tree as a readable sequence.
+function getEvolutionPaths(chainNode, path = []) {
+    const currentPath = [...path, capitalizeEveryWord(chainNode.species.name)];
+
+    if (chainNode.evolves_to.length === 0) {
+        return [currentPath];
+    }
+
+    return chainNode.evolves_to.flatMap(nextEvolution =>
+        getEvolutionPaths(nextEvolution, currentPath)
+    );
+}
+
 // Call the function to initialize the Details modal feature
 initializeDetailsModal();
 
@@ -354,60 +398,6 @@ function createAndAppendElement(tagName, textContent) {
     }
     summonPokemon.appendChild(element);
     return element;
-}
-
-// Display a list of Pokemon names
-
-const listLengthInput = document.querySelector('.listLengthInput');
-const offsetInput = document.querySelector('.offsetInput');
-const pokemonListButton = document.querySelector('.pokemonListButton');
-const pokemonList = document.querySelector('#pokemonList');
-
-pokemonListButton.addEventListener('click', getPokemonList);
-listLengthInput.addEventListener('keypress', handleKeyPress);
-offsetInput.addEventListener('keypress', handleKeyPress);
-
-function handleKeyPress(event) {
-    if (event.key === 'Enter') {
-        getPokemonList();
-    }
-}
-
-// getPokemonList function
-async function getPokemonList() {
-    const listLength = listLengthInput.value;
-    const offset = offsetInput.value;
-    const base_url = `https://pokeapi.co/api/v2/pokemon?limit=${listLength}&offset=${offset}`;
-
-    try {
-        const response = await fetch(base_url);
-        const data = await response.json();
-
-        pokemonList.innerHTML = '';
-
-        data.results.forEach(pokemon => {
-            const pokeName = document.createElement('p');
-            
-            // Extract the Pokemon ID from the URL
-            const urlParts = pokemon.url.split('/');
-            const pokemonId = urlParts[urlParts.length - 2];
-            
-            // Capitalize the first letter of every word in the Pokemon name
-            const capitalizedPokemonName = capitalizeEveryWord(pokemon.name);
-            
-            // Create the display string with ID and name
-            const displayString = `${pokemonId} - ${capitalizedPokemonName}`;
-            
-            // Make the name clickable
-            pokeName.innerText = displayString;
-            pokeName.style.cursor = 'pointer';
-            pokeName.addEventListener('click', () => getPokemonByName(pokemon.name));
-            
-            pokemonList.appendChild(pokeName);
-        });
-    } catch (err) {
-        console.log(err);
-    }
 }
 
 // Back-to-Top button
