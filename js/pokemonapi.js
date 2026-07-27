@@ -197,7 +197,7 @@ function initializeDetailsModal() {
             const evolutionData = await evolutionResponse.json();
 
             const evolutionPaths = getEvolutionPaths(evolutionData.chain);
-            populateList('#evolutionsList', evolutionPaths.map(path => path.join(' → ')));
+            populateEvolutionList(evolutionPaths, modal);
 
             showSection('abilitiesSection');
             modal.show();
@@ -213,6 +213,32 @@ function initializeDetailsModal() {
         items.forEach(text => {
             const listItem = document.createElement('li');
             listItem.innerText = text;
+            list.appendChild(listItem);
+        });
+    }
+
+    function populateEvolutionList(paths, modal) {
+        const list = document.querySelector('#evolutionsList');
+        list.innerHTML = '';
+
+        paths.forEach(path => {
+            const listItem = document.createElement('li');
+
+            path.forEach((pokemon, index) => {
+                if (index > 0) listItem.append(' → ');
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'evolution-pokemon-button';
+                button.innerText = pokemon.displayName;
+                button.setAttribute('aria-label', `View ${pokemon.displayName}`);
+                button.addEventListener('click', () => {
+                    modal.hide();
+                    getPokemonByName(pokemon.name);
+                });
+                listItem.appendChild(button);
+            });
+
             list.appendChild(listItem);
         });
     }
@@ -276,7 +302,10 @@ function initializeDetailsModal() {
 }
 
 function getEvolutionPaths(chainNode, path = []) {
-    const currentPath = [...path, capitalizeEveryWord(chainNode.species.name)];
+    const currentPath = [...path, {
+        name: chainNode.species.name,
+        displayName: capitalizeEveryWord(chainNode.species.name)
+    }];
     if (chainNode.evolves_to.length === 0) return [currentPath];
     return chainNode.evolves_to.flatMap(nextEvolution => getEvolutionPaths(nextEvolution, currentPath));
 }

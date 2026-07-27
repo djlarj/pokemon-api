@@ -26,6 +26,19 @@ img {
     background-color: #717171;
 }
 
+.evolution-pokemon-button {
+    background: none;
+    border: 0;
+    color: inherit;
+    padding: 0;
+    text-decoration: underline;
+}
+
+.evolution-pokemon-button:hover,
+.evolution-pokemon-button:focus-visible {
+    color: #9bd3ff;
+}
+
 #button {
     display: inline-block;
     width: 50px;
