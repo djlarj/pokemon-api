@@ -2,7 +2,7 @@
 
 // Selectors and variables
 const summonPokemon = document.querySelector('#pokemonDetails');
-const pokemonNameInput = document.querySelector('.pokemonNameInput');
+const pokemonNameInput = document.querySelector('#pokemonNameInput');
 const pokemonSummonButton = document.querySelector('.pokemonSummonButton');
 const prevPokemon = document.querySelector('#prevPokemon');
 const nextPokemon = document.querySelector('#nextPokemon');
@@ -14,10 +14,11 @@ let isModalOpen = false; // Flag to track modal state
 async function fetchAllPokemonNames() {
     try {
         const response = await fetch('https://pokeapi.co/api/v2/pokemon?limit=10000');
+        if (!response.ok) throw new Error('Failed to load Pokémon list');
         const data = await response.json();
         return data.results.map(pokemon => pokemon.name);
     } catch (err) {
-        console.log(err);
+        console.error(err);
         return [];
     }
 }
@@ -27,189 +28,124 @@ async function setupAutocomplete() {
     const pokemonNames = await fetchAllPokemonNames();
 
     pokemonNameInput.addEventListener('input', () => {
-        const inputValue = pokemonNameInput.value.toLowerCase();
+        const inputValue = pokemonNameInput.value.toLowerCase().trim();
         pokemonSuggestions.innerHTML = '';
 
-        if (inputValue) {
-            const filteredNames = pokemonNames.filter(name => name.startsWith(inputValue));
+        if (!inputValue) return;
 
-            filteredNames.forEach(name => {
+        pokemonNames
+            .filter(name => name.startsWith(inputValue))
+            .slice(0, 10)
+            .forEach(name => {
                 const option = document.createElement('option');
                 option.value = capitalizeEveryWord(name);
                 pokemonSuggestions.appendChild(option);
             });
-        }
     });
+}
+
+function normalizeInput(value) {
+    return value.toString().trim().toLowerCase();
+}
+
+function showLoading() {
+    summonPokemon.innerHTML = '<p>Loading...</p>';
+}
+
+function showError(message) {
+    summonPokemon.innerHTML = `<p>${message}</p>`;
+}
+
+function renderPokemonCard(pokemonData) {
+    summonPokemon.innerHTML = '';
+    currentPokemonId = pokemonData.id;
+
+    createAndAppendElement('h2', capitalizeEveryWord(pokemonData.name));
+    createAndAppendElement('p', `Pokemon ID: ${pokemonData.id}`);
+
+    const displayImage = createAndAppendElement('img');
+    displayImage.src = pokemonData.sprites.other['official-artwork'].front_default || pokemonData.sprites.front_default;
+    displayImage.width = 300;
+    displayImage.alt = `${capitalizeEveryWord(pokemonData.name)} artwork`;
+
+    pokemonData.types.forEach((typeInfo, index) => {
+        createAndAppendElement('p', `Type ${index + 1}: ${capitalizeEveryWord(typeInfo.type.name)}`);
+    });
+
+    createAndAppendElement('p', `Base Experience: ${pokemonData.base_experience}`);
+
+    const heightInInches = (pokemonData.height / 10) * 39.37;
+    createAndAppendElement('p', `Height: ${heightInInches.toFixed(2)} inches`);
+
+    const weightInPounds = (pokemonData.weight / 10) * 2.20462;
+    createAndAppendElement('p', `Weight: ${weightInPounds.toFixed(2)} lbs`);
+
+    const detailsButton = document.createElement('button');
+    detailsButton.id = 'detailsButton';
+    detailsButton.className = 'btn btn-light btn-sm mt-2';
+    detailsButton.innerText = 'Details';
+    summonPokemon.appendChild(detailsButton);
+
+    prevPokemon.style.display = 'inline';
+    nextPokemon.style.display = 'inline';
+    prevPokemon.onclick = () => getPokemonById(currentPokemonId - 1);
+    nextPokemon.onclick = () => getPokemonById(currentPokemonId + 1);
+}
+
+async function fetchPokemon(key) {
+    try {
+        showLoading();
+        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${normalizeInput(key)}`);
+        if (!response.ok) throw new Error('Pokémon not found');
+        const pokemonData = await response.json();
+        renderPokemonCard(pokemonData);
+    } catch (err) {
+        console.error(err);
+        showError('Pokémon not found. Please try again.');
+    }
+}
+
+function getPokemonByName(name) {
+    if (!name.trim()) {
+        showError('Please enter a Pokémon name or ID.');
+        return;
+    }
+    fetchPokemon(name);
+}
+
+function getPokemonById(id) {
+    if (id < 1) {
+        showError('No previous Pokémon available.');
+        return;
+    }
+    fetchPokemon(id);
 }
 
 setupAutocomplete();
 
-// Event listeners
-pokemonSummonButton.addEventListener('click', () => {
-    const pokemonName = pokemonNameInput.value;
-    getPokemonByName(pokemonName);
-});
+pokemonSummonButton.addEventListener('click', () => getPokemonByName(pokemonNameInput.value));
 
-pokemonNameInput.addEventListener('keypress', (event) => {
+pokemonNameInput.addEventListener('keydown', (event) => {
     if (event.key === 'Enter') {
-        const pokemonName = pokemonNameInput.value;
-        getPokemonByName(pokemonName);
+        event.preventDefault();
+        getPokemonByName(pokemonNameInput.value);
     }
 });
 
-// getPokemonByName function
-async function getPokemonByName(name) {
-    try {
-        // Show loading indicator
-        summonPokemon.innerHTML = '<p>Loading...</p>';
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${name.toLowerCase()}`);
-        if (!response.ok) throw new Error('Pokémon not found');
-        const pokemonData = await response.json();
-
-        summonPokemon.innerHTML = ''; // Clear loading indicator
-        currentPokemonId = pokemonData.id;
-
-        // Capitalize the first letter of every word in Pokemon name, including words after hyphens
-        const capitalizedPokemonName = capitalizeEveryWord(pokemonData.name);
-
-        // Pokemon Name
-        createAndAppendElement('h2', capitalizedPokemonName);
-
-        // Pokemon ID
-        createAndAppendElement('p', "Pokemon ID:" + " " + pokemonData.id);
-
-        // Pokemon Image
-        const displayImage = createAndAppendElement('img');
-        displayImage.src = pokemonData.sprites.other['official-artwork'].front_default;
-        displayImage.width = '300';
-        displayImage.alt = '';
-
-        // Pokemon Type(s)
-        for (let i = 0; i < pokemonData.types.length; i++) {
-            const type = pokemonData.types[i];
-            createAndAppendElement('p', `Type ${i + 1}: ${type.type.name}`);
-        }
-
-        // Pokemon Base Experience
-        createAndAppendElement('p', "Base Experience:" + " " + pokemonData.base_experience);
-
-        // Pokemon Height (converted to inches with 2 decimal places)
-        const heightInInches = (pokemonData.height / 10) * 39.37;
-        createAndAppendElement('p', `Height: ${heightInInches.toFixed(2)} inches`);
-
-        // Pokemon Weight (converted to pounds with 2 decimal places)
-        const weightInPounds = (pokemonData.weight / 10) * 2.20462;
-        createAndAppendElement('p', `Weight: ${weightInPounds.toFixed(2)} lbs`);
-
-        // Insert the Details button
-        const detailsButton = document.createElement('button');
-        detailsButton.id = 'detailsButton';
-        detailsButton.className = 'btn btn-light btn-sm mt-2';
-        detailsButton.innerText = 'Details';
-        summonPokemon.appendChild(detailsButton);
-
-        // Show navigation chevrons
-        prevPokemon.style.display = 'inline';
-        nextPokemon.style.display = 'inline';
-
-        // Update event listeners for chevrons
-        prevPokemon.onclick = () => getPokemonById(currentPokemonId - 1);
-        nextPokemon.onclick = () => getPokemonById(currentPokemonId + 1);
-
-    } catch (err) {
-        console.log(err);
-        summonPokemon.innerHTML = '<p>Pokémon not found. Please try again.</p>';
-    }
-}
-
-// getPokemonById function
-async function getPokemonById(id) {
-    try {
-        // Show loading indicator
-        summonPokemon.innerHTML = '<p>Loading...</p>';
-        const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
-        if (!response.ok) throw new Error('Pokémon not found');
-        const pokemonData = await response.json();
-
-        summonPokemon.innerHTML = ''; // Clear loading indicator
-        currentPokemonId = pokemonData.id;
-
-        // Capitalize the first letter of every word in Pokemon name, including words after hyphens
-        const capitalizedPokemonName = capitalizeEveryWord(pokemonData.name);
-
-        // Pokemon Name
-        createAndAppendElement('h2', capitalizedPokemonName);
-
-        // Pokemon ID
-        createAndAppendElement('p', "Pokemon ID:" + " " + pokemonData.id);
-
-        // Pokemon Image
-        const displayImage = createAndAppendElement('img');
-        displayImage.src = pokemonData.sprites.other['official-artwork'].front_default;
-        displayImage.width = '300';
-        displayImage.alt = '';
-
-        // Pokemon Type(s)
-        for (let i = 0; i < pokemonData.types.length; i++) {
-            const type = pokemonData.types[i];
-            createAndAppendElement('p', `Type ${i + 1}: ${type.type.name}`);
-        }
-
-        // Pokemon Base Experience
-        createAndAppendElement('p', "Base Experience:" + " " + pokemonData.base_experience);
-
-        // Pokemon Height (converted to inches with 2 decimal places)
-        const heightInInches = (pokemonData.height / 10) * 39.37;
-        createAndAppendElement('p', `Height: ${heightInInches.toFixed(2)} inches`);
-
-        // Pokemon Weight (converted to pounds with 2 decimal places)
-        const weightInPounds = (pokemonData.weight / 10) * 2.20462;
-        createAndAppendElement('p', `Weight: ${weightInPounds.toFixed(2)} lbs`);
-
-        // Insert the Details button
-        const detailsButton = document.createElement('button');
-        detailsButton.id = 'detailsButton';
-        detailsButton.className = 'btn btn-light btn-sm mt-2';
-        detailsButton.innerText = 'Details';
-        summonPokemon.appendChild(detailsButton);
-
-        // Show navigation chevrons
-        prevPokemon.style.display = 'inline';
-        nextPokemon.style.display = 'inline';
-
-        // Update event listeners for chevrons
-        prevPokemon.onclick = () => getPokemonById(currentPokemonId - 1);
-        nextPokemon.onclick = () => getPokemonById(currentPokemonId + 1);
-
-    } catch (err) {
-        console.log(err);
-        summonPokemon.innerHTML = '<p>Pokémon not found. Please try again.</p>';
-    }
-}
-
-// Variables to store touch positions
+// Swipe navigation for the main card
 let touchstartX = 0;
 let touchendX = 0;
-const swipeThreshold = 100; // Minimum swipe distance in pixels
+const swipeThreshold = 100;
 
-// Function to handle swipe gestures
 function handleGesture() {
-    if (!isModalOpen) { // Only handle swipe if modal is not open
-        const swipeDistance = touchendX - touchstartX;
+    if (isModalOpen || !currentPokemonId) return;
+    const swipeDistance = touchendX - touchstartX;
 
-        if (Math.abs(swipeDistance) > swipeThreshold) {
-            if (swipeDistance < 0) {
-                // Swiped left
-                getPokemonById(currentPokemonId + 1);
-            } else if (swipeDistance > 0) {
-                // Swiped right
-                getPokemonById(currentPokemonId - 1);
-            }
-        }
+    if (Math.abs(swipeDistance) > swipeThreshold) {
+        swipeDistance < 0 ? getPokemonById(currentPokemonId + 1) : getPokemonById(currentPokemonId - 1);
     }
 }
 
-// Event listeners for touch events within the pokemonDetails div
 summonPokemon.addEventListener('touchstart', (event) => {
     touchstartX = event.changedTouches[0].screenX;
 });
@@ -228,23 +164,18 @@ function capitalizeEveryWord(string) {
 
 function createAndAppendElement(tagName, text) {
     const element = document.createElement(tagName);
-    if (text) {
-        element.innerText = text;
-    }
+    if (text) element.innerText = text;
     summonPokemon.appendChild(element);
     return element;
 }
 
-// Function to initialize the Details modal feature
 function initializeDetailsModal() {
-    // Add event listener for Details button
     document.addEventListener('click', (event) => {
         if (event.target && event.target.id === 'detailsButton') {
             showDetailsModal();
         }
     });
 
-    // Function to show the details modal
     async function showDetailsModal() {
         const modal = new bootstrap.Modal(document.getElementById('pokemonDetailsModal'), {
             keyboard: false
@@ -252,29 +183,12 @@ function initializeDetailsModal() {
 
         try {
             const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${currentPokemonId}`);
+            if (!response.ok) throw new Error('Details not found');
             const pokemonData = await response.json();
 
-            // Populate abilities
-            const abilitiesList = document.querySelector('#abilitiesList');
-            abilitiesList.innerHTML = '';
-            pokemonData.abilities.forEach(abilityInfo => {
-                const abilityName = capitalizeEveryWord(abilityInfo.ability.name);
-                const listItem = document.createElement('li');
-                listItem.innerText = abilityName;
-                abilitiesList.appendChild(listItem);
-            });
+            populateList('#abilitiesList', pokemonData.abilities.map(item => capitalizeEveryWord(item.ability.name)));
+            populateList('#movesList', pokemonData.moves.map(item => capitalizeEveryWord(item.move.name)));
 
-            // Populate moves
-            const movesList = document.querySelector('#movesList');
-            movesList.innerHTML = '';
-            pokemonData.moves.forEach(moveInfo => {
-                const moveName = capitalizeEveryWord(moveInfo.move.name);
-                const listItem = document.createElement('li');
-                listItem.innerText = moveName;
-                movesList.appendChild(listItem);
-            });
-
-            // Fetch the species record to find this Pokémon's evolution chain.
             const speciesResponse = await fetch(pokemonData.species.url);
             if (!speciesResponse.ok) throw new Error('Evolution data not found');
             const speciesData = await speciesResponse.json();
@@ -282,51 +196,48 @@ function initializeDetailsModal() {
             if (!evolutionResponse.ok) throw new Error('Evolution data not found');
             const evolutionData = await evolutionResponse.json();
 
-            const evolutionsList = document.querySelector('#evolutionsList');
-            evolutionsList.innerHTML = '';
             const evolutionPaths = getEvolutionPaths(evolutionData.chain);
-
-            evolutionPaths.forEach(path => {
-                const listItem = document.createElement('li');
-                listItem.innerText = path.join(' → ');
-                evolutionsList.appendChild(listItem);
-            });
+            populateList('#evolutionsList', evolutionPaths.map(path => path.join(' → ')));
 
             showSection('abilitiesSection');
             modal.show();
-            isModalOpen = true; // Set flag to true when modal is shown
+            isModalOpen = true;
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
     }
 
-    // Swipe functionality within modal
-    let modalTouchstartX = 0;
-    let modalTouchendX = 0;
-    const modalSwipeThreshold = 100; // Minimum swipe distance in pixels
+    function populateList(selector, items) {
+        const list = document.querySelector(selector);
+        list.innerHTML = '';
+        items.forEach(text => {
+            const listItem = document.createElement('li');
+            listItem.innerText = text;
+            list.appendChild(listItem);
+        });
+    }
 
-    // Event listeners for touch events in modal
-    document.querySelector('.modal-content').addEventListener('touchstart', (event) => {
-        modalTouchstartX = event.changedTouches[0].screenX;
-        event.stopPropagation(); // Stop propagation to prevent background swipe
-    });
+    const modalContent = document.querySelector('.modal-content');
+    if (modalContent) {
+        let modalTouchstartX = 0;
+        let modalTouchendX = 0;
+        const modalSwipeThreshold = 100;
 
-    document.querySelector('.modal-content').addEventListener('touchend', (event) => {
-        modalTouchendX = event.changedTouches[0].screenX;
-        handleModalSwipe();
-        event.stopPropagation(); // Stop propagation to prevent background swipe
-    });
+        modalContent.addEventListener('touchstart', (event) => {
+            modalTouchstartX = event.changedTouches[0].screenX;
+            event.stopPropagation();
+        });
 
-    function handleModalSwipe() {
-        const swipeDistance = modalTouchendX - modalTouchstartX;
+        modalContent.addEventListener('touchend', (event) => {
+            modalTouchendX = event.changedTouches[0].screenX;
+            handleModalSwipe();
+            event.stopPropagation();
+        });
 
-        if (Math.abs(swipeDistance) > modalSwipeThreshold) {
-            if (swipeDistance < 0) {
-                // Swiped left
-                showNextSection();
-            } else if (swipeDistance > 0) {
-                // Swiped right
-                showPreviousSection();
+        function handleModalSwipe() {
+            const swipeDistance = modalTouchendX - modalTouchstartX;
+            if (Math.abs(swipeDistance) > modalSwipeThreshold) {
+                swipeDistance < 0 ? showNextSection() : showPreviousSection();
             }
         }
     }
@@ -349,65 +260,33 @@ function initializeDetailsModal() {
         });
         document.querySelector(`#${sectionId}`).style.display = 'block';
 
-        document.querySelectorAll('.modal-footer .dot').forEach(dot => {
-            dot.classList.remove('active');
-        });
+        document.querySelectorAll('.modal-footer .dot').forEach(dot => dot.classList.remove('active'));
         document.querySelector(`.modal-footer .dot[data-target="${sectionId}"]`).classList.add('active');
     }
 
-    // Handle click on navigation dots
     document.querySelectorAll('.modal-footer .dot').forEach(dot => {
         dot.addEventListener('click', (event) => {
-            const target = event.target.getAttribute('data-target');
-            showSection(target);
+            showSection(event.target.getAttribute('data-target'));
         });
     });
 
-    // Event listener to update modal open state when modal is hidden
     document.getElementById('pokemonDetailsModal').addEventListener('hidden.bs.modal', () => {
-        isModalOpen = false; // Set flag to false when modal is hidden
+        isModalOpen = false;
     });
-
-    // Function to capitalize every word in a string
-    function capitalizeEveryWord(str) {
-        return str.replace(/\b\w/g, char => char.toUpperCase());
-    }
 }
 
-// Return every branch of an evolution tree as a readable sequence.
 function getEvolutionPaths(chainNode, path = []) {
     const currentPath = [...path, capitalizeEveryWord(chainNode.species.name)];
-
-    if (chainNode.evolves_to.length === 0) {
-        return [currentPath];
-    }
-
-    return chainNode.evolves_to.flatMap(nextEvolution =>
-        getEvolutionPaths(nextEvolution, currentPath)
-    );
+    if (chainNode.evolves_to.length === 0) return [currentPath];
+    return chainNode.evolves_to.flatMap(nextEvolution => getEvolutionPaths(nextEvolution, currentPath));
 }
 
-// Call the function to initialize the Details modal feature
 initializeDetailsModal();
-
-// Helper function to create and append elements to the summonPokemon container
-function createAndAppendElement(tagName, textContent) {
-    const element = document.createElement(tagName);
-    if (textContent) {
-        element.innerText = textContent;
-    }
-    summonPokemon.appendChild(element);
-    return element;
-}
 
 // Back-to-Top button
 const btn = $('#button');
-
-$(window).scroll(function() {
-    btn.toggleClass('show', $(window).scrollTop() > 100);
-});
-
-btn.on('click', function(e) {
+$(window).scroll(() => btn.toggleClass('show', $(window).scrollTop() > 100));
+btn.on('click', (e) => {
     e.preventDefault();
-    $('html, body').animate({scrollTop: 0}, 100);
+    $('html, body').animate({ scrollTop: 0 }, 100);
 });
